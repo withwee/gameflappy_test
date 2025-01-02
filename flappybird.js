@@ -98,59 +98,66 @@ function loadAssets() {
 }
 
 function update() {
-    if (!context) {
-        console.error("Context is not initialized!");
-        return;
-    }
-
-    if (gameOver) {
-        // Display game over screen
-        context.drawImage(gameOverBgImg, 0, 0, boardWidth, boardHeight);
-        displayGameOverText();
-        return;
-    }
-
-    // Game logic
     requestAnimationFrame(update);
+    if (gameOver) {
+        context.drawImage(gameOverBgImg, 0, 0, boardWidth, boardHeight);
+        context.fillStyle = "white";
+        context.font = "50px '04B_19'"; // Updated font style
+        context.fillText("Game Over", 20, 150);
+        context.fillText("Score: " + score, 20, 220);
+        context.fillText("High Score: " + highScore, 20, 290);
+        return;
+    }
 
-    // Draw background
-    context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight);
+    context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight); // Draw current background
 
-    // Update bird
+    //bird
     velocityY += gravity;
-    bird.y = Math.max(bird.y + velocityY, 0);
+    bird.y = Math.max(bird.y + velocityY, 0); //apply gravity to current bird.y, limit the bird.y to top of the canvas
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
 
     if (bird.y > board.height) {
-        triggerGameOver();
+        gameOver = true;
+        highScore = Math.max(highScore, score);
+        sfxDie.play();
     }
 
-    // Update pipes
+    //pipes
     for (let i = 0; i < pipeArray.length; i++) {
         let pipe = pipeArray[i];
         pipe.x += velocityX;
         context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
 
-        // Score increment
         if (!pipe.passed && bird.x > pipe.x + pipe.width) {
-            score += 0.5;
+            score += 0.5; //0.5 because there are 2 pipes! so 0.5*2 = 1, 1 for each set of pipes
             pipe.passed = true;
             sfxPoint.play();
         }
 
-        // Collision detection
         if (detectCollision(bird, pipe)) {
-            triggerGameOver();
+            gameOver = true;
+            highScore = Math.max(highScore, score);
+            sfxHit.play();
         }
     }
 
-    // Remove off-screen pipes
+    //clear pipes
     while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
-        pipeArray.shift();
+        pipeArray.shift(); //removes first element from the array
     }
 
-    // Draw score
-    drawScore();
+    //level progression
+    if (score >= 25 && score < 50) {
+        velocityX = -3; // Increase speed at score 25
+    } else if (score >= 50) {
+        velocityX = -4 - Math.floor((score - 50) / 10); // Further increase speed for each 10 points after 50
+        currentBgImg = nightBgImg; // Change to night background
+    }
+
+    //score
+    context.fillStyle = "white";
+    context.font = "50px '04B_19'"; // Updated font style
+    context.fillText(score, 5, 50);
 }
 
 function placePipes() {
