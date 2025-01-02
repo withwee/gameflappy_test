@@ -106,12 +106,16 @@ function loadAssets() {
 function showStartMenu() {
     context.drawImage(startMenuBgImg, 0, 0, boardWidth, boardHeight);
     context.fillStyle = "white";
+    
+    if (openingAudio.readyState >= 3) {
+        openingAudio.play();  // Play the opening audio
+        openingAudio.loop = true;  // Loop the audio
+    }
 }
 
 function startGame() {
     gameStarted = true;
     sfxSwooshing.play();
-    openingAudio.play();  // Start the audio once the game begins
     currentBgImg = dayBgImg;  // Set the main background to day after starting
     requestAnimationFrame(update);
 }
