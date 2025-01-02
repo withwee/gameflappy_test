@@ -181,20 +181,31 @@ function placePipes() {
 }
 
 function moveBird(e) {
+    if (gameOver) {
+        restartGame(); // Restart game if game over
+        return;
+    }
+
     if (e.type === "keydown" && (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX")) {
-        jumpBird();
+        velocityY = -6; // Bird jumps
+        sfxWing.play();
     } else if (e.type === "touchstart") {
-        jumpBird();
+        velocityY = -6; // Bird jumps on tap
+        sfxWing.play();
     }
 }
 
-function jumpBird() {
-    if (gameOver) {
-        restartGame(); // Restart game if gameOver
-        return;
-    }
-    velocityY = -6; // Jump
-    sfxWing.play();
+function restartGame() {
+    // Reset game state
+    bird.y = birdY;
+    pipeArray = [];
+    score = 0;
+    gameOver = false;
+    velocityY = 0; 
+    velocityX = -2; 
+    currentBgImg = dayBgImg; 
+    sfxSwooshing.play();
+    requestAnimationFrame(update); 
 }
 
 function detectCollision(a, b) {
