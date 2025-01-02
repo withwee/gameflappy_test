@@ -7,16 +7,16 @@ let context;
 //bird
 let birdWidth = 40; // Increased width for larger icon
 let birdHeight = 28; // Adjusted height to maintain aspect ratio
-let birdX = boardWidth/8;
-let birdY = boardHeight/2;
+let birdX = boardWidth / 8;
+let birdY = boardHeight / 2;
 let birdImg;
 
 let bird = {
-    x : birdX,
-    y : birdY,
-    width : birdWidth,
-    height : birdHeight
-}
+    x: birdX,
+    y: birdY,
+    width: birdWidth,
+    height: birdHeight
+};
 
 //pipes
 let pipeArray = [];
@@ -50,7 +50,7 @@ let sfxPoint;
 let sfxSwooshing;
 let sfxWing;
 
-window.onload = function() {
+window.onload = function () {
     board = document.getElementById("board");
     board.height = boardHeight;
     board.width = boardWidth;
@@ -67,7 +67,7 @@ window.onload = function() {
     bottomPipeImg.src = "./bottompipe.png";
 
     dayBgImg = new Image();
-    dayBgImg.src = "./flappybirdbg.png";
+    dayBgImg.src = "./background-day.png";
 
     nightBgImg = new Image();
     nightBgImg.src = "./background-night.png";
@@ -87,16 +87,15 @@ window.onload = function() {
     requestAnimationFrame(update);
     setInterval(placePipes, 1500); //every 1.5 seconds
     document.addEventListener("keydown", moveBird);
-}
+    document.addEventListener("touchstart", moveBird); // Add touch event listener
+};
 
 function update() {
     requestAnimationFrame(update);
     if (gameOver) {
-        console.log("Game Over detected: update loop exiting early.");
-        // Display game over screen
         context.drawImage(gameOverBgImg, 0, 0, boardWidth, boardHeight);
         context.fillStyle = "white";
-        context.font="50px '04B_19'"; // Updated font style
+        context.font = "50px '04B_19'"; // Updated font style
         context.fillText("Game Over", 20, 150);
         context.fillText("Score: " + score, 20, 220);
         context.fillText("High Score: " + highScore, 20, 290);
@@ -143,14 +142,14 @@ function update() {
     //level progression
     if (score >= 25 && score < 50) {
         velocityX = -3; // Increase speed at score 25
-    } else if (score >= 10) {
-        velocityX = -4 - Math.floor((score - 50) / 10); 
-        currentBgImg = nightBgImg; 
+    } else if (score >= 50) {
+        velocityX = -4 - Math.floor((score - 50) / 10); // Further increase speed for each 10 points after 50
+        currentBgImg = nightBgImg; // Change to night background
     }
 
     //score
     context.fillStyle = "white";
-    context.font="50px '04B_19'"; // Updated font style
+    context.font = "50px '04B_19'"; // Updated font style
     context.fillText(score, 5, 50);
 }
 
@@ -159,46 +158,51 @@ function placePipes() {
         return;
     }
 
-    let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);
-    let openingSpace = board.height/4;
+    let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
+    let openingSpace = board.height / 4;
 
     let topPipe = {
-        img : topPipeImg,
-        x : pipeX,
-        y : randomPipeY,
-        width : pipeWidth,
-        height : pipeHeight,
-        passed : false
-    }
+        img: topPipeImg,
+        x: pipeX,
+        y: randomPipeY,
+        width: pipeWidth,
+        height: pipeHeight,
+        passed: false
+    };
     pipeArray.push(topPipe);
 
     let bottomPipe = {
-        img : bottomPipeImg,
-        x : pipeX,
-        y : randomPipeY + pipeHeight + openingSpace,
-        width : pipeWidth,
-        height : pipeHeight,
-        passed : false
-    }
+        img: bottomPipeImg,
+        x: pipeX,
+        y: randomPipeY + pipeHeight + openingSpace,
+        width: pipeWidth,
+        height: pipeHeight,
+        passed: false
+    };
     pipeArray.push(bottomPipe);
 }
 
 function moveBird(e) {
-    if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX") {
-        //jump
-        velocityY = -6;
-        sfxWing.play();
+    if (e.type === "keydown" && (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX")) {
+        jumpBird();
+    } else if (e.type === "touchstart") {
+        jumpBird();
+    }
+}
 
-        //reset game
-        if (gameOver) {
-            bird.y = birdY;
-            pipeArray = [];
-            score = 0;
-            gameOver = false;
-            currentBgImg = dayBgImg; // Reset background to day
-            velocityX = -2; // Reset speed
-            sfxSwooshing.play();
-        }
+function jumpBird() {
+    velocityY = -6;
+    sfxWing.play();
+
+    //reset game
+    if (gameOver) {
+        bird.y = birdY;
+        pipeArray = [];
+        score = 0;
+        gameOver = false;
+        currentBgImg = dayBgImg; // Reset background to day
+        velocityX = -2; // Reset speed
+        sfxSwooshing.play();
     }
 }
 
