@@ -54,6 +54,10 @@
         let gameStarted = false;
 
         window.onload = function () {
+            usernameInput = document.getElementById("username");
+            passwordInput = document.getElementById("password");
+            loginMessage = document.getElementById("login-message");
+                
             board = document.getElementById("board");
             board.height = boardHeight;
             board.width = boardWidth;
@@ -68,8 +72,9 @@
             // Add event listeners
             document.addEventListener("keydown", moveBird);
             board.addEventListener("touchstart", moveBird);
-
             setInterval(placePipes, 1500); // Spawn pipes every 1.5 seconds
+            document.getElementById("form-login").addEventListener("submit", handleLogin);
+
         };
 
         function loadAssets() {
@@ -101,6 +106,25 @@
             sfxPoint = new Audio("./sfx_point.wav");
             sfxSwooshing = new Audio("./sfx_swooshing.wav");
             sfxWing = new Audio("./sfx_wing.wav");
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+        
+            // Simulate login validation
+            if (username === "itnay" && password === "ivannadYANTI") {
+                isLoggedIn = true;
+                loginMessage.textContent = "";
+                document.getElementById("login-form").style.display = "none"; // Hide login form
+                document.getElementById("game-board").style.display = "block"; // Show game board
+                requestAnimationFrame(update);
+                setInterval(placePipes, 1500);
+                document.addEventListener("keydown", moveBird);
+            } else {
+                loginMessage.textContent = "Invalid username or password!";
+            }
         }
 
         function update() {
