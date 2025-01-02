@@ -93,7 +93,10 @@
             
             startMenuBgImg = new Image();
             startMenuBgImg.src = "./bgawal.png";  
-
+            startMenuBgImg.onload = function () {
+            currentBgImg = startMenuBgImg;
+            showStartMenu();
+            }
             currentBgImg = dayBgImg;
 
             sfxDie = new Audio("./sfx_die.wav");
