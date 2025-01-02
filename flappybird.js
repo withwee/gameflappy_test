@@ -73,43 +73,52 @@
             setInterval(placePipes, 1500); // Spawn pipes every 1.5 seconds
         };
 
-        function loadAssets() {
-            birdImg = new Image();
-            birdImg.src = "./flappybird.png";
+function loadAssets() {
+    birdImg = new Image();
+    birdImg.src = "./flappybird.png";
 
-            topPipeImg = new Image();
-            topPipeImg.src = "./toppipe.png";
+    topPipeImg = new Image();
+    topPipeImg.src = "./toppipe.png";
 
-            bottomPipeImg = new Image();
-            bottomPipeImg.src = "./bottompipe.png";
+    bottomPipeImg = new Image();
+    bottomPipeImg.src = "./bottompipe.png";
 
-            dayBgImg = new Image();
-            dayBgImg.src = "./flappybirdbg.png";
+    dayBgImg = new Image();
+    dayBgImg.src = "./flappybirdbg.png";
 
-            nightBgImg = new Image();
-            nightBgImg.src = "./background-night.png";
+    nightBgImg = new Image();
+    nightBgImg.src = "./background-night.png";
 
-            gameOverBgImg = new Image();
-            gameOverBgImg.src = "./bgover.jpg";
-            
-            startMenuBgImg = new Image();
-            startMenuBgImg.src = "./bgawal.png";  
-            openingAudio = new Audio("./opening.mp3");
-            openingAudio.loop = true;
-            openingAudio.play();
-            startMenuBgImg.onload = function () {
-            currentBgImg = startMenuBgImg;
-            showStartMenu();
-            }
-            currentBgImg = dayBgImg;
+    gameOverBgImg = new Image();
+    gameOverBgImg.src = "./bgover.jpg";
+    
+    startMenuBgImg = new Image();
+    startMenuBgImg.src = "./bgawal.png";  
 
-            sfxDie = new Audio("./sfx_die.wav");
-            sfxHit = new Audio("./sfx_hit.wav");
-            sfxPoint = new Audio("./sfx_point.wav");
-            sfxSwooshing = new Audio("./sfx_swooshing.wav");
-            sfxWing = new Audio("./sfx_wing.wav");
-        }
+    sfxDie = new Audio("./sfx_die.wav");
+    sfxHit = new Audio("./sfx_hit.wav");
+    sfxPoint = new Audio("./sfx_point.wav");
+    sfxSwooshing = new Audio("./sfx_swooshing.wav");
+    sfxWing = new Audio("./sfx_wing.wav");
+    
+    // Initialize the opening audio and ensure it loops after load
+    openingAudio = new Audio("./opening.mp3");
+    openingAudio.loop = true;
+    openingAudio.load();  // Ensure it loads properly
+}
 
+function showStartMenu() {
+    context.drawImage(startMenuBgImg, 0, 0, boardWidth, boardHeight);
+    context.fillStyle = "white";
+}
+
+function startGame() {
+    gameStarted = true;
+    sfxSwooshing.play();
+    openingAudio.play();  // Start the audio once the game begins
+    currentBgImg = dayBgImg;  // Set the main background to day after starting
+    requestAnimationFrame(update);
+}
         function update() {
             // If the game hasn't started, show the start menu
             if (!gameStarted) {
