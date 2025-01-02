@@ -68,8 +68,8 @@ window.onload = function () {
     // Load assets
     loadAssets();
 
-    // Add event listeners
-    document.getElementById("form-login").addEventListener("submit", handleLogin);
+    // Add event listeners for login
+    document.getElementById("submit-login").addEventListener("click", handleLogin);
 };
 
 function loadAssets() {
@@ -103,8 +103,7 @@ function loadAssets() {
     sfxWing = new Audio("./sfx_wing.wav");
 }
 
-function handleLogin(event) {
-    event.preventDefault();
+function handleLogin() {
     const username = usernameInput.value;
     const password = passwordInput.value;
 
@@ -119,9 +118,6 @@ function handleLogin(event) {
 
         // Show the start menu with bgawal.png
         showStartMenu(); 
-        // Start the game after login
-        document.addEventListener("keydown", moveBird);
-        board.addEventListener("touchstart", moveBird);
     } else {
         loginMessage.textContent = "Invalid username or password!";
     }
@@ -132,6 +128,10 @@ function showStartMenu() {
     context.fillStyle = "white";
     context.font = "30px '04B_19'";
     context.fillText("Press any key or tap to start", 40, boardHeight / 2);
+
+    // Set up event listener for starting the game
+    document.addEventListener("keydown", moveBird);
+    board.addEventListener("touchstart", moveBird);
 }
 
 function moveBird(e) {
