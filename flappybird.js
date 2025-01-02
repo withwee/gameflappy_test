@@ -56,7 +56,20 @@ window.onload = function () {
     board.width = boardWidth;
     context = board.getContext("2d");
 
-    //load images
+    // Load images
+    loadAssets();
+
+    // Start game loop
+    requestAnimationFrame(update);
+
+    // Add event listeners
+    document.addEventListener("keydown", moveBird);
+    board.addEventListener("touchstart", moveBird);
+
+    setInterval(placePipes, 1500); // Spawn pipes every 1.5 seconds
+};
+
+function loadAssets() {
     birdImg = new Image();
     birdImg.src = "./flappybird.png";
 
@@ -77,47 +90,39 @@ window.onload = function () {
 
     currentBgImg = dayBgImg;
 
-    //load sounds
     sfxDie = new Audio("./sfx_die.wav");
     sfxHit = new Audio("./sfx_hit.wav");
     sfxPoint = new Audio("./sfx_point.wav");
     sfxSwooshing = new Audio("./sfx_swooshing.wav");
     sfxWing = new Audio("./sfx_wing.wav");
-
-    requestAnimationFrame(update);
-    setInterval(placePipes, 1500); // Place pipes every 1.5 seconds
-
-    // Event listeners
-    document.addEventListener("keydown", moveBird);
-    board.addEventListener("touchstart", moveBird);
-};
+}
 
 function update() {
-    requestAnimationFrame(update);
+    if (!context) {
+        console.error("Context is not initialized!");
+        return;
+    }
 
     if (gameOver) {
         // Display game over screen
         context.drawImage(gameOverBgImg, 0, 0, boardWidth, boardHeight);
-        context.fillStyle = "white";
-        context.font = "50px '04B_19'";
-        context.fillText("Game Over", 20, 150);
-        context.fillText("Score: " + score, 20, 220);
-        context.fillText("High Score: " + highScore, 20, 290);
+        displayGameOverText();
         return;
     }
+
+    // Game logic
+    requestAnimationFrame(update);
 
     // Draw background
     context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight);
 
-    // Update bird position
+    // Update bird
     velocityY += gravity;
     bird.y = Math.max(bird.y + velocityY, 0);
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
 
     if (bird.y > board.height) {
-        gameOver = true;
-        highScore = Math.max(highScore, score);
-        sfxDie.play();
+        triggerGameOver();
     }
 
     // Update pipes
@@ -126,38 +131,26 @@ function update() {
         pipe.x += velocityX;
         context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
 
-        // Check if pipe is passed
+        // Score increment
         if (!pipe.passed && bird.x > pipe.x + pipe.width) {
             score += 0.5;
             pipe.passed = true;
             sfxPoint.play();
         }
 
-        // Check collision
+        // Collision detection
         if (detectCollision(bird, pipe)) {
-            gameOver = true;
-            highScore = Math.max(highScore, score);
-            sfxHit.play();
+            triggerGameOver();
         }
     }
 
-    // Remove old pipes
+    // Remove off-screen pipes
     while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
         pipeArray.shift();
     }
 
-    // Level progression
-    if (score >= 25 && score < 50) {
-        velocityX = -3;
-    } else if (score >= 50) {
-        velocityX = -4 - Math.floor((score - 50) / 10);
-        currentBgImg = nightBgImg;
-    }
-
     // Draw score
-    context.fillStyle = "white";
-    context.font = "50px '04B_19'";
-    context.fillText(score, 5, 50);
+    drawScore();
 }
 
 function placePipes() {
@@ -188,7 +181,9 @@ function placePipes() {
 }
 
 function moveBird(e) {
-    if (e.type === "touchstart" || (e.type === "keydown" && (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX"))) {
+    if (e.type === "keydown" && (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX")) {
+        jumpBird();
+    } else if (e.type === "touchstart") {
         jumpBird();
     }
 }
@@ -198,13 +193,7 @@ function jumpBird() {
     sfxWing.play();
 
     if (gameOver) {
-        bird.y = birdY;
-        pipeArray = [];
-        score = 0;
-        gameOver = false;
-        currentBgImg = dayBgImg;
-        velocityX = -2;
-        sfxSwooshing.play();
+        restartGame();
     }
 }
 
@@ -215,4 +204,34 @@ function detectCollision(a, b) {
         a.y < b.y + b.height &&
         a.y + a.height > b.y
     );
+}
+
+function drawScore() {
+    context.fillStyle = "white";
+    context.font = "50px '04B_19'";
+    context.fillText(score, 5, 50);
+}
+
+function displayGameOverText() {
+    context.fillStyle = "white";
+    context.font = "50px '04B_19'";
+    context.fillText("Game Over", 20, 150);
+    context.fillText("Score: " + score, 20, 220);
+    context.fillText("High Score: " + highScore, 20, 290);
+}
+
+function triggerGameOver() {
+    gameOver = true;
+    highScore = Math.max(highScore, score);
+    sfxDie.play();
+}
+
+function restartGame() {
+    bird.y = birdY;
+    pipeArray = [];
+    score = 0;
+    gameOver = false;
+    currentBgImg = dayBgImg;
+    velocityX = -2;
+    sfxSwooshing.play();
 }
