@@ -182,10 +182,13 @@ function placePipes() {
     pipeArray.push(bottomPipe);
 }
 
+board.addEventListener("touchstart", moveBird); // Ganti document dengan board
+
 function moveBird(e) {
-    if (e.type === "keydown" && (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX")) {
+    if (e.type === "touchstart") {
+        e.preventDefault(); // Cegah perilaku default browser (opsional)
         jumpBird();
-    } else if (e.type === "touchstart") {
+    } else if (e.type === "keydown" && (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX")) {
         jumpBird();
     }
 }
