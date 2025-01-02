@@ -1,291 +1,292 @@
-        let board;
-        let boardWidth = 360;
-        let boardHeight = 640;
-        let context;
+let board;
+let boardWidth = 360;
+let boardHeight = 640;
+let context;
 
-        // Bird
-        let birdWidth = 40;
-        let birdHeight = 28;
-        let birdX = boardWidth / 8;
-        let birdY = boardHeight / 2;
-        let birdImg;
+// Bird
+let birdWidth = 40;
+let birdHeight = 28;
+let birdX = boardWidth / 8;
+let birdY = boardHeight / 2;
+let birdImg;
 
-        let bird = {
-            x: birdX,
-            y: birdY,
-            width: birdWidth,
-            height: birdHeight,
-        };
+let bird = {
+    x: birdX,
+    y: birdY,
+    width: birdWidth,
+    height: birdHeight,
+};
 
-        // Pipes
-        let pipeArray = [];
-        let pipeWidth = 64;
-        let pipeHeight = 512;
-        let pipeX = boardWidth;
-        let pipeY = 0;
+// Pipes
+let pipeArray = [];
+let pipeWidth = 64;
+let pipeHeight = 512;
+let pipeX = boardWidth;
+let pipeY = 0;
 
-        let topPipeImg;
-        let bottomPipeImg;
+let topPipeImg;
+let bottomPipeImg;
 
-        // Backgrounds
-        let dayBgImg;
-        let nightBgImg;
-        let currentBgImg;
-        let startMenuBgImg;
+// Backgrounds
+let dayBgImg;
+let nightBgImg;
+let currentBgImg;
+let startMenuBgImg;
 
-        // Physics
-        let velocityX = -2;
-        let velocityY = 0;
-        let gravity = 0.4;
+let gameOverBgImg;
 
-        let gameOver = false;
-        let score = 0;
-        let highScore = 0;
-        let gameOverBgImg;
+// Sounds
+let sfxDie;
+let sfxHit;
+let sfxPoint;
+let sfxSwooshing;
+let sfxWing;
 
-        // Sounds
-        let sfxDie;
-        let sfxHit;
-        let sfxPoint;
-        let sfxSwooshing;
-        let sfxWing;
+let velocityX = -2;
+let velocityY = 0;
+let gravity = 0.4;
 
-        // New flag to check if the game has started
-        let gameStarted = false;
+let gameOver = false;
+let score = 0;
+let highScore = 0;
 
-        window.onload = function () {
-            usernameInput = document.getElementById("username");
-            passwordInput = document.getElementById("password");
-            loginMessage = document.getElementById("login-message");
-                
-            board = document.getElementById("board");
-            board.height = boardHeight;
-            board.width = boardWidth;
-            context = board.getContext("2d");
+// New flag to check if the game has started
+let gameStarted = false;
 
-            // Load assets
-            loadAssets();
+window.onload = function () {
+    usernameInput = document.getElementById("username");
+    passwordInput = document.getElementById("password");
+    loginMessage = document.getElementById("login-message");
 
-            // Start game loop
-            requestAnimationFrame(update);
+    board = document.getElementById("board");
+    board.height = boardHeight;
+    board.width = boardWidth;
+    context = board.getContext("2d");
 
-            // Add event listeners
-            document.addEventListener("keydown", moveBird);
-            board.addEventListener("touchstart", moveBird);
-            setInterval(placePipes, 1500); // Spawn pipes every 1.5 seconds
-            document.getElementById("form-login").addEventListener("submit", handleLogin);
+    // Load assets
+    loadAssets();
 
-        };
+    // Start game loop
+    requestAnimationFrame(update);
 
-        function loadAssets() {
-            birdImg = new Image();
-            birdImg.src = "./flappybird.png";
+    // Add event listeners
+    document.addEventListener("keydown", moveBird);
+    board.addEventListener("touchstart", moveBird);
+    setInterval(placePipes, 1500); // Spawn pipes every 1.5 seconds
+    document.getElementById("form-login").addEventListener("submit", handleLogin);
+};
 
-            topPipeImg = new Image();
-            topPipeImg.src = "./toppipe.png";
+function loadAssets() {
+    birdImg = new Image();
+    birdImg.src = "./flappybird.png";
 
-            bottomPipeImg = new Image();
-            bottomPipeImg.src = "./bottompipe.png";
+    topPipeImg = new Image();
+    topPipeImg.src = "./toppipe.png";
 
-            dayBgImg = new Image();
-            dayBgImg.src = "./flappybirdbg.png";
+    bottomPipeImg = new Image();
+    bottomPipeImg.src = "./bottompipe.png";
 
-            nightBgImg = new Image();
-            nightBgImg.src = "./background-night.png";
+    dayBgImg = new Image();
+    dayBgImg.src = "./flappybirdbg.png";
 
-            gameOverBgImg = new Image();
-            gameOverBgImg.src = "./bgover.jpg";
-            
-            startMenuBgImg = new Image();
-            startMenuBgImg.src = "./bgawal.png";  
+    nightBgImg = new Image();
+    nightBgImg.src = "./background-night.png";
 
-            currentBgImg = dayBgImg;
+    gameOverBgImg = new Image();
+    gameOverBgImg.src = "./bgover.jpg";
 
-            sfxDie = new Audio("./sfx_die.wav");
-            sfxHit = new Audio("./sfx_hit.wav");
-            sfxPoint = new Audio("./sfx_point.wav");
-            sfxSwooshing = new Audio("./sfx_swooshing.wav");
-            sfxWing = new Audio("./sfx_wing.wav");
+    startMenuBgImg = new Image();
+    startMenuBgImg.src = "./bgawal.png";
+
+    currentBgImg = dayBgImg;
+
+    sfxDie = new Audio("./sfx_die.wav");
+    sfxHit = new Audio("./sfx_hit.wav");
+    sfxPoint = new Audio("./sfx_point.wav");
+    sfxSwooshing = new Audio("./sfx_swooshing.wav");
+    sfxWing = new Audio("./sfx_wing.wav");
+}
+
+function handleLogin(event) {
+    event.preventDefault();
+    const username = usernameInput.value;
+    const password = passwordInput.value;
+
+    // Simulate login validation
+    if (username === "itnay" && password === "ivannadYANTI") {
+        isLoggedIn = true;
+        loginMessage.textContent = "";
+        document.getElementById("login-form").style.display = "none"; // Hide login form
+        document.getElementById("game-board").style.display = "block"; // Show game board
+        showStartMenu(); // Show the start menu with bgawal.png
+        document.addEventListener("keydown", moveBird);
+        board.addEventListener("touchstart", moveBird);
+    } else {
+        loginMessage.textContent = "Invalid username or password!";
+    }
+}
+
+function update() {
+    // If the game hasn't started, show the start menu
+    if (!gameStarted) {
+        showStartMenu();
+        return;
+    }
+
+    // Game update loop after the start
+    if (gameOver) {
+        displayGameOverText();
+        return;
+    }
+
+    requestAnimationFrame(update);
+    context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight);
+
+    // Bird logic
+    velocityY += gravity;
+    bird.y = Math.max(bird.y + velocityY, 0);
+    context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
+
+    if (bird.y > board.height) {
+        triggerGameOver();
+    }
+
+    // Pipe logic
+    for (let i = 0; i < pipeArray.length; i++) {
+        let pipe = pipeArray[i];
+        pipe.x += velocityX;
+        context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
+
+        if (!pipe.passed && bird.x > pipe.x + pipe.width) {
+            score += 0.5;
+            pipe.passed = true;
+            sfxPoint.play();
         }
 
-        function handleLogin(event) {
-            event.preventDefault();
-            const username = usernameInput.value;
-            const password = passwordInput.value;
-        
-            // Simulate login validation
-            if (username === "itnay" && password === "ivannadYANTI") {
-                isLoggedIn = true;
-                loginMessage.textContent = "";
-                document.getElementById("login-form").style.display = "none"; // Hide login form
-                document.getElementById("game-board").style.display = "block"; // Show game board
-                requestAnimationFrame(update);
-                setInterval(placePipes, 1500);
-                document.addEventListener("keydown", moveBird);
-            } else {
-                loginMessage.textContent = "Invalid username or password!";
-            }
+        if (detectCollision(bird, pipe)) {
+            triggerGameOver();
         }
+    }
 
-        function update() {
-            // If the game hasn't started, show the start menu
-            if (!gameStarted) {
-                showStartMenu();
-                return;
-            }
+    // Clear off-screen pipes
+    while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
+        pipeArray.shift();
+    }
 
-            // Game update loop after the start
-            if (gameOver) {
-                displayGameOverText();
-                return;
-            }
+    // Level progression
+    if (score >= 25 && score < 50) {
+        velocityX = -3;
+    } else if (score >= 50) {
+        velocityX = -4 - Math.floor((score - 50) / 10);
+        currentBgImg = nightBgImg;
+    }
 
-            requestAnimationFrame(update);
-            context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight);
+    // Draw score
+    drawScore();
+}
 
-            // Bird logic
-            velocityY += gravity;
-            bird.y = Math.max(bird.y + velocityY, 0);
-            context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
+function showStartMenu() {
+    context.drawImage(startMenuBgImg, 0, 0, boardWidth, boardHeight);
+    context.fillStyle = "white";
+    context.font = "30px '04B_19'";
+    context.fillText("Press any key or tap to start", 40, boardHeight / 2);
+}
 
-            if (bird.y > board.height) {
-                triggerGameOver();
-            }
+function moveBird(e) {
+    if (!gameStarted) {
+        startGame();  // Start the game if not started yet
+        return;
+    }
 
-            // Pipe logic
-            for (let i = 0; i < pipeArray.length; i++) {
-                let pipe = pipeArray[i];
-                pipe.x += velocityX;
-                context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
+    if (gameOver) {
+        restartGame();
+        return;
+    }
 
-                if (!pipe.passed && bird.x > pipe.x + pipe.width) {
-                    score += 0.5;
-                    pipe.passed = true;
-                    sfxPoint.play();
-                }
+    if (e.type === "keydown" && (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX")) {
+        velocityY = -6;
+        sfxWing.play();
+    } else if (e.type === "touchstart") {
+        velocityY = -6;
+        sfxWing.play();
+    }
+}
 
-                if (detectCollision(bird, pipe)) {
-                    triggerGameOver();
-                }
-            }
+// Start the game when the player taps or presses any key
+function startGame() {
+    gameStarted = true;
+    sfxSwooshing.play();
+    requestAnimationFrame(update);
+}
 
-            // Clear off-screen pipes
-            while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
-                pipeArray.shift();
-            }
+// Restart the game
+function restartGame() {
+    bird.y = birdY;
+    pipeArray = [];
+    score = 0;
+    gameOver = false;
+    velocityY = 0;
+    velocityX = -2;
+    currentBgImg = dayBgImg;
+    sfxSwooshing.play();
+    requestAnimationFrame(update);
+}
 
-            // Level progression
-            if (score >= 25 && score < 50) {
-                velocityX = -3;
-            } else if (score >= 50) {
-                velocityX = -4 - Math.floor((score - 50) / 10);
-                currentBgImg = nightBgImg;
-            }
+// Place pipes
+function placePipes() {
+    if (gameOver) return;
 
-            // Draw score
-            drawScore();
-        }
+    let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
+    let openingSpace = board.height / 4;
 
-        function showStartMenu() {
-            context.drawImage(startMenuBgImg, 0, 0, boardWidth, boardHeight);
-            context.fillStyle = "white";
-        }
+    let topPipe = {
+        img: topPipeImg,
+        x: pipeX,
+        y: randomPipeY,
+        width: pipeWidth,
+        height: pipeHeight,
+        passed: false,
+    };
+    pipeArray.push(topPipe);
 
-        function moveBird(e) {
-            if (!gameStarted) {
-                startGame();  // Start the game if not started yet
-                return;
-            }
+    let bottomPipe = {
+        img: bottomPipeImg,
+        x: pipeX,
+        y: randomPipeY + pipeHeight + openingSpace,
+        width: pipeWidth,
+        height: pipeHeight,
+        passed: false,
+    };
+    pipeArray.push(bottomPipe);
+}
 
-            if (gameOver) {
-                restartGame();
-                return;
-            }
+// Detect collisions between the bird and pipes
+function detectCollision(a, b) {
+    return (
+        a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y
+    );
+}
 
-            if (e.type === "keydown" && (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX")) {
-                velocityY = -6;
-                sfxWing.play();
-            } else if (e.type === "touchstart") {
-                velocityY = -6;
-                sfxWing.play();
-            }
-        }
+function drawScore() {
+    context.fillStyle = "white";
+    context.font = "50px '04B_19'";
+    context.fillText(score, 5, 50);
+}
 
-        // Start the game when the player taps or presses any key
-        function startGame() {
-            gameStarted = true;
-            sfxSwooshing.play();
-            requestAnimationFrame(update);
-        }
+function displayGameOverText() {
+    context.drawImage(gameOverBgImg, 0, 0, boardWidth, boardHeight);
+    context.fillStyle = "white";
+    context.font = "50px '04B_19'";
+    context.fillText("Game Over", 20, 150);
+    context.fillText("Score: " + score, 20, 220);
+    context.fillText("High Score: " + highScore, 20, 290);
+}
 
-        // Restart the game
-        function restartGame() {
-            bird.y = birdY;
-            pipeArray = [];
-            score = 0;
-            gameOver = false;
-            velocityY = 0;
-            velocityX = -2;
-            currentBgImg = dayBgImg;
-            sfxSwooshing.play();
-            requestAnimationFrame(update);
-        }
-
-        // Place pipes
-        function placePipes() {
-            if (gameOver) return;
-
-            let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
-            let openingSpace = board.height / 4;
-
-            let topPipe = {
-                img: topPipeImg,
-                x: pipeX,
-                y: randomPipeY,
-                width: pipeWidth,
-                height: pipeHeight,
-                passed: false,
-            };
-            pipeArray.push(topPipe);
-
-            let bottomPipe = {
-                img: bottomPipeImg,
-                x: pipeX,
-                y: randomPipeY + pipeHeight + openingSpace,
-                width: pipeWidth,
-                height: pipeHeight,
-                passed: false,
-            };
-            pipeArray.push(bottomPipe);
-        }
-
-        // Detect collisions between the bird and pipes
-        function detectCollision(a, b) {
-            return (
-                a.x < b.x + b.width &&
-                a.x + a.width > b.x &&
-                a.y < b.y + b.height &&
-                a.y + a.height > b.y
-            );
-        }
-
-        function drawScore() {
-            context.fillStyle = "white";
-            context.font = "50px '04B_19'";
-            context.fillText(score, 5, 50);
-        }
-
-        function displayGameOverText() {
-            context.drawImage(gameOverBgImg, 0, 0, boardWidth, boardHeight);
-            context.fillStyle = "white";
-            context.font = "50px '04B_19'";
-            context.fillText("Game Over", 20, 150);
-            context.fillText("Score: " + score, 20, 220);
-            context.fillText("High Score: " + highScore, 20, 290);
-        }
-
-        function triggerGameOver() {
-            gameOver = true;
-            highScore = Math.max(highScore, score);
-            sfxDie.play();
-        }
+function triggerGameOver() {
+    gameOver = true;
+    highScore = Math.max(highScore, score);
+    sfxDie.play();
+}
