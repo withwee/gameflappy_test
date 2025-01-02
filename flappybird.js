@@ -67,7 +67,7 @@ window.onload = function () {
     bottomPipeImg.src = "./bottompipe.png";
 
     dayBgImg = new Image();
-    dayBgImg.src = "./background-day.png";
+    dayBgImg.src = "./flappybirdbg.png";
 
     nightBgImg = new Image();
     nightBgImg.src = "./background-night.png";
