@@ -183,17 +183,18 @@ function startGame() {
             context.fillStyle = "white";
         }
 
-        function moveBird(e) {
+             function moveBird(e) {
             if (!gameStarted) {
                 startGame();  // Start the game if not started yet
+                currentBgImg = dayBgImg; // Change background after the first tap
                 return;
             }
-
+        
             if (gameOver) {
                 restartGame();
                 return;
             }
-
+        
             if (e.type === "keydown" && (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX")) {
                 velocityY = -6;
                 sfxWing.play();
@@ -202,6 +203,7 @@ function startGame() {
                 sfxWing.play();
             }
         }
+
 
         // Start the game when the player taps or presses any key
         function startGame() {
