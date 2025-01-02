@@ -49,6 +49,7 @@
         let sfxPoint;
         let sfxSwooshing;
         let sfxWing;
+        let openingAudio;
 
         // New flag to check if the game has started
         let gameStarted = false;
