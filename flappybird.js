@@ -94,7 +94,7 @@
             gameOverBgImg.src = "./bgover.jpg";
             
             startMenuBgImg = new Image();
-            startMenuBgImg.src = "./bgawal.png";  
+            startMenuBgImg.src = "./bgawl.png";  
 
             currentBgImg = dayBgImg;
 
