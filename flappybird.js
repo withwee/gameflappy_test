@@ -93,6 +93,9 @@
             
             startMenuBgImg = new Image();
             startMenuBgImg.src = "./bgawal.png";  
+            openingAudio = new Audio("./opening.mp3");
+            openingAudio.loop = true;
+            openingAudio.play();
             startMenuBgImg.onload = function () {
             currentBgImg = startMenuBgImg;
             showStartMenu();
