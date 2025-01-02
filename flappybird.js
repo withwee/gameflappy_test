@@ -189,12 +189,12 @@ function moveBird(e) {
 }
 
 function jumpBird() {
-    velocityY = -6;
-    sfxWing.play();
-
     if (gameOver) {
-        restartGame();
+        restartGame(); // Restart game if gameOver
+        return;
     }
+    velocityY = -6; // Jump
+    sfxWing.play();
 }
 
 function detectCollision(a, b) {
