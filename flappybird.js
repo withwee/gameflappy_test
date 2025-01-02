@@ -32,7 +32,6 @@ let dayBgImg;
 let nightBgImg;
 let currentBgImg;
 let startMenuBgImg;
-
 let gameOverBgImg;
 
 // Sounds
@@ -53,6 +52,9 @@ let highScore = 0;
 // New flag to check if the game has started
 let gameStarted = false;
 
+// Flag for login status
+let isLoggedIn = false;
+
 window.onload = function () {
     usernameInput = document.getElementById("username");
     passwordInput = document.getElementById("password");
@@ -66,13 +68,7 @@ window.onload = function () {
     // Load assets
     loadAssets();
 
-    // Start game loop
-    requestAnimationFrame(update);
-
     // Add event listeners
-    document.addEventListener("keydown", moveBird);
-    board.addEventListener("touchstart", moveBird);
-    setInterval(placePipes, 1500); // Spawn pipes every 1.5 seconds
     document.getElementById("form-login").addEventListener("submit", handleLogin);
 };
 
@@ -116,14 +112,66 @@ function handleLogin(event) {
     if (username === "itnay" && password === "ivannadYANTI") {
         isLoggedIn = true;
         loginMessage.textContent = "";
-        document.getElementById("login-form").style.display = "none"; // Hide login form
-        document.getElementById("game-board").style.display = "block"; // Show game board
-        showStartMenu(); // Show the start menu with bgawal.png
+
+        // Hide the login form and show the game board
+        document.getElementById("login-form").style.display = "none"; 
+        document.getElementById("game-board").style.display = "block"; 
+
+        // Show the start menu with bgawal.png
+        showStartMenu(); 
+        // Start the game after login
         document.addEventListener("keydown", moveBird);
         board.addEventListener("touchstart", moveBird);
     } else {
         loginMessage.textContent = "Invalid username or password!";
     }
+}
+
+function showStartMenu() {
+    context.drawImage(startMenuBgImg, 0, 0, boardWidth, boardHeight);
+    context.fillStyle = "white";
+    context.font = "30px '04B_19'";
+    context.fillText("Press any key or tap to start", 40, boardHeight / 2);
+}
+
+function moveBird(e) {
+    if (!gameStarted) {
+        startGame();  // Start the game if not started yet
+        return;
+    }
+
+    if (gameOver) {
+        restartGame();
+        return;
+    }
+
+    if (e.type === "keydown" && (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX")) {
+        velocityY = -6;
+        sfxWing.play();
+    } else if (e.type === "touchstart") {
+        velocityY = -6;
+        sfxWing.play();
+    }
+}
+
+// Start the game when the player taps or presses any key
+function startGame() {
+    gameStarted = true;
+    sfxSwooshing.play();
+    requestAnimationFrame(update);
+}
+
+// Restart the game
+function restartGame() {
+    bird.y = birdY;
+    pipeArray = [];
+    score = 0;
+    gameOver = false;
+    velocityY = 0;
+    velocityX = -2;
+    currentBgImg = dayBgImg;
+    sfxSwooshing.play();
+    requestAnimationFrame(update);
 }
 
 function update() {
@@ -185,54 +233,27 @@ function update() {
     drawScore();
 }
 
-function showStartMenu() {
-    context.drawImage(startMenuBgImg, 0, 0, boardWidth, boardHeight);
+function drawScore() {
     context.fillStyle = "white";
-    context.font = "30px '04B_19'";
-    context.fillText("Press any key or tap to start", 40, boardHeight / 2);
+    context.font = "50px '04B_19'";
+    context.fillText(score, 5, 50);
 }
 
-function moveBird(e) {
-    if (!gameStarted) {
-        startGame();  // Start the game if not started yet
-        return;
-    }
-
-    if (gameOver) {
-        restartGame();
-        return;
-    }
-
-    if (e.type === "keydown" && (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX")) {
-        velocityY = -6;
-        sfxWing.play();
-    } else if (e.type === "touchstart") {
-        velocityY = -6;
-        sfxWing.play();
-    }
+function displayGameOverText() {
+    context.drawImage(gameOverBgImg, 0, 0, boardWidth, boardHeight);
+    context.fillStyle = "white";
+    context.font = "50px '04B_19'";
+    context.fillText("Game Over", 20, 150);
+    context.fillText("Score: " + score, 20, 220);
+    context.fillText("High Score: " + highScore, 20, 290);
 }
 
-// Start the game when the player taps or presses any key
-function startGame() {
-    gameStarted = true;
-    sfxSwooshing.play();
-    requestAnimationFrame(update);
+function triggerGameOver() {
+    gameOver = true;
+    highScore = Math.max(highScore, score);
+    sfxDie.play();
 }
 
-// Restart the game
-function restartGame() {
-    bird.y = birdY;
-    pipeArray = [];
-    score = 0;
-    gameOver = false;
-    velocityY = 0;
-    velocityX = -2;
-    currentBgImg = dayBgImg;
-    sfxSwooshing.play();
-    requestAnimationFrame(update);
-}
-
-// Place pipes
 function placePipes() {
     if (gameOver) return;
 
@@ -260,7 +281,6 @@ function placePipes() {
     pipeArray.push(bottomPipe);
 }
 
-// Detect collisions between the bird and pipes
 function detectCollision(a, b) {
     return (
         a.x < b.x + b.width &&
@@ -268,25 +288,4 @@ function detectCollision(a, b) {
         a.y < b.y + b.height &&
         a.y + a.height > b.y
     );
-}
-
-function drawScore() {
-    context.fillStyle = "white";
-    context.font = "50px '04B_19'";
-    context.fillText(score, 5, 50);
-}
-
-function displayGameOverText() {
-    context.drawImage(gameOverBgImg, 0, 0, boardWidth, boardHeight);
-    context.fillStyle = "white";
-    context.font = "50px '04B_19'";
-    context.fillText("Game Over", 20, 150);
-    context.fillText("Score: " + score, 20, 220);
-    context.fillText("High Score: " + highScore, 20, 290);
-}
-
-function triggerGameOver() {
-    gameOver = true;
-    highScore = Math.max(highScore, score);
-    sfxDie.play();
 }
