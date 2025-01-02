@@ -1,5 +1,3 @@
-
-        // Game Board
         let board;
         let boardWidth = 360;
         let boardHeight = 640;
@@ -167,8 +165,6 @@
         function showStartMenu() {
             context.drawImage(startMenuBgImg, 0, 0, boardWidth, boardHeight);
             context.fillStyle = "white";
-            context.font = "40px '04B_19'";
-            context.fillText("Tap to Start", 100, boardHeight / 2);
         }
 
         function moveBird(e) {
