@@ -100,11 +100,7 @@ function loadAssets() {
     sfxPoint = new Audio("./sfx_point.wav");
     sfxSwooshing = new Audio("./sfx_swooshing.wav");
     sfxWing = new Audio("./sfx_wing.wav");
-    
-    // Initialize the opening audio and ensure it loops after load
     openingAudio = new Audio("./opening.mp3");
-    openingAudio.loop = true;
-    openingAudio.load();  // Ensure it loads properly
 }
 
 function showStartMenu() {
@@ -182,6 +178,8 @@ function startGame() {
             context.drawImage(startMenuBgImg, 0, 0, boardWidth, boardHeight);
             context.fillStyle = "white";
             openingAudio.play();
+            openingAudio.loop = true;
+            openingAudio.load();
         }
 
           function moveBird(e) {
