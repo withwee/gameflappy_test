@@ -85,16 +85,18 @@ window.onload = function () {
     sfxWing = new Audio("./sfx_wing.wav");
 
     requestAnimationFrame(update);
-    setInterval(placePipes, 1500); //every 1.5 seconds
+    setInterval(placePipes, 1500); // Place pipes every 1.5 seconds
 
-    // Input listeners for keyboard and touch
+    // Event listeners
     document.addEventListener("keydown", moveBird);
     board.addEventListener("touchstart", moveBird);
 };
 
 function update() {
     requestAnimationFrame(update);
+
     if (gameOver) {
+        // Display game over screen
         context.drawImage(gameOverBgImg, 0, 0, boardWidth, boardHeight);
         context.fillStyle = "white";
         context.font = "50px '04B_19'";
@@ -104,9 +106,10 @@ function update() {
         return;
     }
 
+    // Draw background
     context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight);
 
-    //bird
+    // Update bird position
     velocityY += gravity;
     bird.y = Math.max(bird.y + velocityY, 0);
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
@@ -117,18 +120,20 @@ function update() {
         sfxDie.play();
     }
 
-    //pipes
+    // Update pipes
     for (let i = 0; i < pipeArray.length; i++) {
         let pipe = pipeArray[i];
         pipe.x += velocityX;
         context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
 
+        // Check if pipe is passed
         if (!pipe.passed && bird.x > pipe.x + pipe.width) {
             score += 0.5;
             pipe.passed = true;
             sfxPoint.play();
         }
 
+        // Check collision
         if (detectCollision(bird, pipe)) {
             gameOver = true;
             highScore = Math.max(highScore, score);
@@ -136,12 +141,12 @@ function update() {
         }
     }
 
-    //clear pipes
+    // Remove old pipes
     while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
         pipeArray.shift();
     }
 
-    //level progression
+    // Level progression
     if (score >= 25 && score < 50) {
         velocityX = -3;
     } else if (score >= 50) {
@@ -149,7 +154,7 @@ function update() {
         currentBgImg = nightBgImg;
     }
 
-    //score
+    // Draw score
     context.fillStyle = "white";
     context.font = "50px '04B_19'";
     context.fillText(score, 5, 50);
