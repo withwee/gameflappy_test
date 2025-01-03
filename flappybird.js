@@ -268,6 +268,7 @@ function startGame() {
                passed: false,
            };
              pipeArray.push(bottomPipe);
+             console.log(pipeArray); 
          }
 
         // Detect collisions between the bird and pipes
