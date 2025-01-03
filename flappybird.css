@@ -1,9 +1,56 @@
 body {
-    font-family:'Courier New', Courier, monospace;
-    text-align: center;
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Courier New', Courier, monospace; 
+    text-align: center; 
+    background-color: #87ceeb; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; 
+    overflow: hidden; 
 }
 
+
 #board {
-    /* background-color: skyblue; */
     background-image: url("./flappybirdbg.png");
+    background-size: cover; 
+    background-position: center; 
+    display: block; 
+    margin: 0 auto; 
+    width: 100%; 
+    height: auto; /* Jaga rasio aspek canvas */
+    max-width: 360px; /* Batasi lebar maksimum */
+    max-height: 640px; /* Batasi tinggi maksimum */
+    image-rendering: crisp-edges; 
+    image-rendering: pixelated; 
+    -webkit-image-rendering: pixelated;
+}
+
+h1, h2, h3, p {
+    color: white; /* Warna teks */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); 
+    margin: 0.5em 0; 
+}
+
+button {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.2rem;
+    color: white;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); 
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049; 
+}
+
+button:active {
+    background-color: #3e8e41; 
 }
