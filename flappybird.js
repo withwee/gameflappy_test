@@ -1,4 +1,4 @@
-   let board;
+ let board;
         let boardWidth = 360;
         let boardHeight = 640;
         let context;
@@ -73,7 +73,8 @@
             // Add event listeners
             document.addEventListener("keydown", moveBird);
             board.addEventListener("touchstart", moveBird);
-            setInterval(placePipes, 1500); 
+        
+            setInterval(placePipes, 1500); // Spawn pipes setiap 1,5 detik
         };
 
 function loadAssets() {
