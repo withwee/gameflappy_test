@@ -54,17 +54,22 @@
         // New flag to check if the game has started
         let gameStarted = false;
 
+        function scaleCanvas() {
+        const ratio = window.devicePixelRatio || 1;
+        board.width = boardWidth * ratio;
+        board.height = boardHeight * ratio;
+        context.scale(ratio, ratio);
+    }
         window.onload = function () {
             board = document.getElementById("board");
-            board.height = boardHeight;
-            board.width = boardWidth;
+            scaleCanvas(); 
             context = board.getContext("2d");
         
             // Load assets
             loadAssets();
         
             // Set background awal ke start menu setelah gambar dimuat
-            startMenuBgImg.onload = function() {
+                startMenuBgImg.onload = function() {
                 currentBgImg = startMenuBgImg;
                 context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight);
                 requestAnimationFrame(update);
