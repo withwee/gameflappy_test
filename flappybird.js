@@ -1,4 +1,4 @@
-        let board;
+   let board;
         let boardWidth = 360;
         let boardHeight = 640;
         let context;
@@ -28,10 +28,10 @@
         let bottomPipeImg;
 
         // Backgrounds
-        let startMenuBgImg;
         let dayBgImg;
         let nightBgImg;
         let currentBgImg;
+        let startMenuBgImg;
 
         // Physics
         let velocityX = -2;
@@ -54,27 +54,30 @@
         // New flag to check if the game has started
         let gameStarted = false;
 
-window.onload = function () {
-    board = document.getElementById("board");
-    board.height = boardHeight;
-    board.width = boardWidth;
-    context = board.getContext("2d");
-
-    currentBgImg = startMenuBgImg;
-    context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight); // Gambar latar awal langsung
-
-    loadAssets();
-    requestAnimationFrame(update);
-
-    document.addEventListener("keydown", moveBird);
-    board.addEventListener("touchstart", moveBird);
-    setInterval(placePipes, 1500); // Spawn pipes setiap 1,5 detik
-};
+        window.onload = function () {
+            board = document.getElementById("board");
+            board.height = boardHeight;
+            board.width = boardWidth;
+            context = board.getContext("2d");
+        
+            // Load assets
+            loadAssets();
+        
+            // Set background awal ke start menu setelah gambar dimuat
+            startMenuBgImg.onload = function() {
+                currentBgImg = startMenuBgImg;
+                context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight);
+                requestAnimationFrame(update);
+            };
+        
+            // Add event listeners
+            document.addEventListener("keydown", moveBird);
+            board.addEventListener("touchstart", moveBird);
+        
+            setInterval(placePipes, 1500); // Spawn pipes setiap 1,5 detik
+        };
 
 function loadAssets() {
-    startMenuBgImg = new Image();
-    startMenuBgImg.src = "./bgawal.png";  
-        
     birdImg = new Image();
     birdImg.src = "./flappybird.png";
 
@@ -93,6 +96,9 @@ function loadAssets() {
     gameOverBgImg = new Image();
     gameOverBgImg.src = "./bgover.jpg";
     
+    startMenuBgImg = new Image();
+    startMenuBgImg.src = "./bgawal.png";  
+
     sfxDie = new Audio("./sfx_die.wav");
     sfxHit = new Audio("./sfx_hit.wav");
     sfxPoint = new Audio("./sfx_point.wav");
@@ -284,5 +290,3 @@ function startGame() {
             highScore = Math.max(highScore, score);
             sfxDie.play();
         }
-
-
