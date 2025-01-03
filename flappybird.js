@@ -60,23 +60,22 @@ window.onload = function () {
     board.width = boardWidth;
     context = board.getContext("2d");
 
-    // Set background awal ke start menu
     currentBgImg = startMenuBgImg;
+    context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight); // Gambar latar awal langsung
 
-    // Load assets
     loadAssets();
-
-    // Start game loop
     requestAnimationFrame(update);
 
-    // Add event listeners
     document.addEventListener("keydown", moveBird);
     board.addEventListener("touchstart", moveBird);
-
-    setInterval(placePipes, 1500); // Spawn pipes every 1.5 seconds
+    setInterval(placePipes, 1500); // Spawn pipes setiap 1,5 detik
 };
 
+
 function loadAssets() {
+    startMenuBgImg = new Image();
+    startMenuBgImg.src = "./bgawal.png";  
+        
     birdImg = new Image();
     birdImg.src = "./flappybird.png";
 
@@ -95,9 +94,6 @@ function loadAssets() {
     gameOverBgImg = new Image();
     gameOverBgImg.src = "./bgover.jpg";
     
-    startMenuBgImg = new Image();
-    startMenuBgImg.src = "./bgawal.png";  
-
     sfxDie = new Audio("./sfx_die.wav");
     sfxHit = new Audio("./sfx_hit.wav");
     sfxPoint = new Audio("./sfx_point.wav");
