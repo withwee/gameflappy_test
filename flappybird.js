@@ -54,24 +54,27 @@
         // New flag to check if the game has started
         let gameStarted = false;
 
-        window.onload = function () {
-            board = document.getElementById("board");
-            board.height = boardHeight;
-            board.width = boardWidth;
-            context = board.getContext("2d");
+window.onload = function () {
+    board = document.getElementById("board");
+    board.height = boardHeight;
+    board.width = boardWidth;
+    context = board.getContext("2d");
 
-            // Load assets
-            loadAssets();
+    // Set background awal ke start menu
+    currentBgImg = startMenuBgImg;
 
-            // Start game loop
-            requestAnimationFrame(update);
+    // Load assets
+    loadAssets();
 
-            // Add event listeners
-            document.addEventListener("keydown", moveBird);
-            board.addEventListener("touchstart", moveBird);
+    // Start game loop
+    requestAnimationFrame(update);
 
-            setInterval(placePipes, 1500); // Spawn pipes every 1.5 seconds
-        };
+    // Add event listeners
+    document.addEventListener("keydown", moveBird);
+    board.addEventListener("touchstart", moveBird);
+
+    setInterval(placePipes, 1500); // Spawn pipes every 1.5 seconds
+};
 
 function loadAssets() {
     birdImg = new Image();
