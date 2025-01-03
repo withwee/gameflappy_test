@@ -54,22 +54,17 @@
         // New flag to check if the game has started
         let gameStarted = false;
 
-        function scaleCanvas() {
-        const ratio = window.devicePixelRatio || 1;
-        board.width = boardWidth * ratio;
-        board.height = boardHeight * ratio;
-        context.scale(ratio, ratio);
-    }
         window.onload = function () {
             board = document.getElementById("board");
-            scaleCanvas(); 
+            board.height = boardHeight;
+            board.width = boardWidth;
             context = board.getContext("2d");
         
             // Load assets
             loadAssets();
         
             // Set background awal ke start menu setelah gambar dimuat
-                startMenuBgImg.onload = function() {
+            startMenuBgImg.onload = function() {
                 currentBgImg = startMenuBgImg;
                 context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight);
                 requestAnimationFrame(update);
@@ -157,23 +152,26 @@ function startGame() {
             for (let i = 0; i < pipeArray.length; i++) {
                 let pipe = pipeArray[i];
                 pipe.x += velocityX;
+            
+                // Gambar pipa
                 context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
-
+            
+                // Deteksi skor
                 if (!pipe.passed && bird.x > pipe.x + pipe.width) {
                     score += 0.5;
                     pipe.passed = true;
                     sfxPoint.play();
                 }
-
+            
+                // Deteksi tabrakan
                 if (detectCollision(bird, pipe)) {
                     triggerGameOver();
                 }
             }
+            
+            // Hapus pipa yang sudah keluar dari layar
+            pipeArray = pipeArray.filter(pipe => pipe.x + pipe.width > 0);
 
-            // Clear off-screen pipes
-            while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
-                pipeArray.shift();
-            }
 
             // Level progression
             if (score >= 25 && score < 50) {
@@ -237,34 +235,38 @@ function startGame() {
             requestAnimationFrame(update);
         }
 
-        // Place pipes
-         function placePipes() {
-             if (gameOver) return;
-         
-             let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
-             let openingSpace = board.height / 4;
-         
-             // Debugging: log nilai randomPipeY dan openingSpace
-             console.log(`randomPipeY: ${randomPipeY}, openingSpace: ${openingSpace}`);
-         
-             let topPipe = {
-                 img: topPipeImg,
-                 x: pipeX,
-                 y: randomPipeY,
-                 width: pipeWidth,
-                 height: pipeHeight,
-                 passed: false,
-             };
-             pipeArray.push(topPipe);
-         
-             let bottomPipe = {
-                 img: bottomPipeImg,
-                 x: pipeX,
-                 y: randomPipeY + pipeHeight + openingSpace,
-                 width: pipeWidth,
-                 height: pipeHeight,
-                 passed: false,
-             };
+       function placePipes() {
+           if (gameOver) return;
+       
+           // Hitung waktu antar pipa berdasarkan kecepatan horizontal
+           let timeBetweenPipes = Math.abs(pipeWidth / velocityX) * 1000; // dalam ms
+           if (Date.now() - lastPipeTime < timeBetweenPipes) {
+               return;
+           }
+       
+           lastPipeTime = Date.now();
+       
+           let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
+           let openingSpace = board.height / 4;
+       
+           let topPipe = {
+               img: topPipeImg,
+               x: pipeX,
+               y: randomPipeY,
+               width: pipeWidth,
+               height: pipeHeight,
+               passed: false,
+           };
+           pipeArray.push(topPipe);
+       
+           let bottomPipe = {
+               img: bottomPipeImg,
+               x: pipeX,
+               y: randomPipeY + pipeHeight + openingSpace,
+               width: pipeWidth,
+               height: pipeHeight,
+               passed: false,
+           };
              pipeArray.push(bottomPipe);
          }
 
