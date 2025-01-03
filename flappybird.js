@@ -152,26 +152,23 @@ function startGame() {
             for (let i = 0; i < pipeArray.length; i++) {
                 let pipe = pipeArray[i];
                 pipe.x += velocityX;
-            
-                // Gambar pipa
                 context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
-            
-                // Deteksi skor
+
                 if (!pipe.passed && bird.x > pipe.x + pipe.width) {
                     score += 0.5;
                     pipe.passed = true;
                     sfxPoint.play();
                 }
-            
-                // Deteksi tabrakan
+
                 if (detectCollision(bird, pipe)) {
                     triggerGameOver();
                 }
             }
-            
-            // Hapus pipa yang sudah keluar dari layar
-            pipeArray = pipeArray.filter(pipe => pipe.x + pipe.width > 0);
 
+            // Clear off-screen pipes
+            while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
+                pipeArray.shift();
+            }
 
             // Level progression
             if (score >= 25 && score < 50) {
@@ -235,41 +232,33 @@ function startGame() {
             requestAnimationFrame(update);
         }
 
-       function placePipes() {
-           if (gameOver) return;
-       
-           // Hitung waktu antar pipa berdasarkan kecepatan horizontal
-           let timeBetweenPipes = Math.abs(pipeWidth / velocityX) * 1000; // dalam ms
-           if (Date.now() - lastPipeTime < timeBetweenPipes) {
-               return;
-           }
-       
-           lastPipeTime = Date.now();
-       
-           let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
-           let openingSpace = board.height / 4;
-       
-           let topPipe = {
-               img: topPipeImg,
-               x: pipeX,
-               y: randomPipeY,
-               width: pipeWidth,
-               height: pipeHeight,
-               passed: false,
-           };
-           pipeArray.push(topPipe);
-       
-           let bottomPipe = {
-               img: bottomPipeImg,
-               x: pipeX,
-               y: randomPipeY + pipeHeight + openingSpace,
-               width: pipeWidth,
-               height: pipeHeight,
-               passed: false,
-           };
-             pipeArray.push(bottomPipe);
-             console.log(pipeArray); 
-         }
+        // Place pipes
+        function placePipes() {
+            if (gameOver) return;
+
+            let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
+            let openingSpace = board.height / 4;
+
+            let topPipe = {
+                img: topPipeImg,
+                x: pipeX,
+                y: randomPipeY,
+                width: pipeWidth,
+                height: pipeHeight,
+                passed: false,
+            };
+            pipeArray.push(topPipe);
+
+            let bottomPipe = {
+                img: bottomPipeImg,
+                x: pipeX,
+                y: randomPipeY + pipeHeight + openingSpace,
+                width: pipeWidth,
+                height: pipeHeight,
+                passed: false,
+            };
+            pipeArray.push(bottomPipe);
+        }
 
         // Detect collisions between the bird and pipes
         function detectCollision(a, b) {
