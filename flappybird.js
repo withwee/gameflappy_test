@@ -233,32 +233,35 @@ function startGame() {
         }
 
         // Place pipes
-        function placePipes() {
-            if (gameOver) return;
-
-            let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
-            let openingSpace = board.height / 4;
-
-            let topPipe = {
-                img: topPipeImg,
-                x: pipeX,
-                y: randomPipeY,
-                width: pipeWidth,
-                height: pipeHeight,
-                passed: false,
-            };
-            pipeArray.push(topPipe);
-
-            let bottomPipe = {
-                img: bottomPipeImg,
-                x: pipeX,
-                y: randomPipeY + pipeHeight + openingSpace,
-                width: pipeWidth,
-                height: pipeHeight,
-                passed: false,
-            };
-            pipeArray.push(bottomPipe);
-        }
+         function placePipes() {
+             if (gameOver) return;
+         
+             let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
+             let openingSpace = board.height / 4;
+         
+             // Debugging: log nilai randomPipeY dan openingSpace
+             console.log(`randomPipeY: ${randomPipeY}, openingSpace: ${openingSpace}`);
+         
+             let topPipe = {
+                 img: topPipeImg,
+                 x: pipeX,
+                 y: randomPipeY,
+                 width: pipeWidth,
+                 height: pipeHeight,
+                 passed: false,
+             };
+             pipeArray.push(topPipe);
+         
+             let bottomPipe = {
+                 img: bottomPipeImg,
+                 x: pipeX,
+                 y: randomPipeY + pipeHeight + openingSpace,
+                 width: pipeWidth,
+                 height: pipeHeight,
+                 passed: false,
+             };
+             pipeArray.push(bottomPipe);
+         }
 
         // Detect collisions between the bird and pipes
         function detectCollision(a, b) {
