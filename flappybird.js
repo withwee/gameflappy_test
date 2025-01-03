@@ -74,7 +74,8 @@
             document.addEventListener("keydown", moveBird);
             board.addEventListener("touchstart", moveBird);
         
-            setInterval(placePipes, 1500); // Spawn pipes setiap 1,5 detik
+            setInterval(placePipes, Math.max(1000, 1500 + 100 * velocityX)); // Interval dinamis
+
         };
 
 function loadAssets() {
@@ -236,9 +237,8 @@ function startGame() {
         function placePipes() {
             if (gameOver) return;
 
-            let openingSpace = Math.max(board.height / 5, 120); 
-            let randomPipeY = Math.random() * (board.height - openingSpace - pipeHeight);
-
+            let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
+            let openingSpace = board.height / 4;
 
             let topPipe = {
                 img: topPipeImg,
