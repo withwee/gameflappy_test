@@ -54,6 +54,23 @@
         // New flag to check if the game has started
         let gameStarted = false;
 
+window.onload = function () {
+    board = document.getElementById("board");
+    board.height = boardHeight;
+    board.width = boardWidth;
+    context = board.getContext("2d");
+
+    currentBgImg = startMenuBgImg;
+    context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight); // Gambar latar awal langsung
+
+    loadAssets();
+    requestAnimationFrame(update);
+
+    document.addEventListener("keydown", moveBird);
+    board.addEventListener("touchstart", moveBird);
+    setInterval(placePipes, 1500); // Spawn pipes setiap 1,5 detik
+};
+
 function loadAssets() {
     startMenuBgImg = new Image();
     startMenuBgImg.src = "./bgawal.png";  
@@ -83,23 +100,6 @@ function loadAssets() {
     sfxWing = new Audio("./sfx_wing.wav");
     openingAudio = new Audio("./opening.mp3");
 }
-
-window.onload = function () {
-    board = document.getElementById("board");
-    board.height = boardHeight;
-    board.width = boardWidth;
-    context = board.getContext("2d");
-
-    currentBgImg = startMenuBgImg;
-    context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight); // Gambar latar awal langsung
-
-    loadAssets();
-    requestAnimationFrame(update);
-
-    document.addEventListener("keydown", moveBird);
-    board.addEventListener("touchstart", moveBird);
-    setInterval(placePipes, 1500); // Spawn pipes setiap 1,5 detik
-};
 
 function showStartMenu() {
     context.drawImage(startMenuBgImg, 0, 0, boardWidth, boardHeight);
