@@ -84,6 +84,23 @@ function loadAssets() {
     openingAudio = new Audio("./opening.mp3");
 }
 
+window.onload = function () {
+    board = document.getElementById("board");
+    board.height = boardHeight;
+    board.width = boardWidth;
+    context = board.getContext("2d");
+
+    currentBgImg = startMenuBgImg;
+    context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight); // Gambar latar awal langsung
+
+    loadAssets();
+    requestAnimationFrame(update);
+
+    document.addEventListener("keydown", moveBird);
+    board.addEventListener("touchstart", moveBird);
+    setInterval(placePipes, 1500); // Spawn pipes setiap 1,5 detik
+};
+
 function showStartMenu() {
     context.drawImage(startMenuBgImg, 0, 0, boardWidth, boardHeight);
     context.fillStyle = "white";
@@ -268,19 +285,4 @@ function startGame() {
             sfxDie.play();
         }
 
-window.onload = function () {
-    board = document.getElementById("board");
-    board.height = boardHeight;
-    board.width = boardWidth;
-    context = board.getContext("2d");
 
-    currentBgImg = startMenuBgImg;
-    context.drawImage(currentBgImg, 0, 0, boardWidth, boardHeight); // Gambar latar awal langsung
-
-    loadAssets();
-    requestAnimationFrame(update);
-
-    document.addEventListener("keydown", moveBird);
-    board.addEventListener("touchstart", moveBird);
-    setInterval(placePipes, 1500); // Spawn pipes setiap 1,5 detik
-};
