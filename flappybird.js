@@ -236,8 +236,9 @@ function startGame() {
         function placePipes() {
             if (gameOver) return;
 
-            let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
-            let openingSpace = board.height / 4;
+            let openingSpace = Math.max(board.height / 5, 120); 
+            let randomPipeY = Math.random() * (board.height - openingSpace - pipeHeight);
+
 
             let topPipe = {
                 img: topPipeImg,
