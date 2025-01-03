@@ -73,9 +73,7 @@
             // Add event listeners
             document.addEventListener("keydown", moveBird);
             board.addEventListener("touchstart", moveBird);
-        
-            setInterval(placePipes, Math.max(1000, 1500 + 100 * velocityX)); // Interval dinamis
-
+            setInterval(placePipes, 1500); 
         };
 
 function loadAssets() {
